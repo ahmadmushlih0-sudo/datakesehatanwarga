@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Data Kesehatan Warga</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #0f766e 0%, #115e59 50%, #134e4a 100%);
+    }
+    
+    .card-shadow {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .stat-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f0fdfa 100%);
+    }
+    
+    .table-row:hover {
+      background-color: #f0fdfa;
+    }
+    
+    .input-focus:focus {
+      outline: none;
+      border-color: #0d9488;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .pulse-dot {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-slate-50"><!-- Login Page -->
+  <div id="login-page" class="h-full flex items-center justify-center p-4 gradient-bg">
+   <div class="bg-white rounded-2xl w-full max-w-md card-shadow overflow-hidden fade-in">
+    <div class="px-8 py-10">
+     <div class="flex flex-col items-center mb-8">
+      <div class="w-20 h-20 bg-gradient-to-br from-teal-400 to-teal-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+       <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+       </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-800 mb-1">Login Admin</h1>
+      <p class="text-sm text-slate-500">Sistem Data Kesehatan Warga</p>
+     </div>
+     <form id="login-form">
+      <div class="space-y-4">
+       <div><label for="login-username" class="block text-sm font-medium text-slate-700 mb-2">Username</label>
+        <div class="relative">
+         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+         </div><input type="text" id="login-username" name="username" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 input-focus text-sm bg-slate-50" placeholder="Masukkan username" autocomplete="username">
+        </div>
+       </div>
+       <div><label for="login-password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+        <div class="relative">
+         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+         </div><input type="password" id="login-password" name="password" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 input-focus text-sm bg-slate-50" placeholder="Masukkan password" autocomplete="current-password">
+        </div>
+       </div>
+       <div id="login-error" class="hidden p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg><span id="login-error-message">Username atau password salah</span>
+       </div>
+      </div><button type="submit" id="btn-login" class="w-full mt-6 btn-primary text-white px-5 py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"> <span id="btn-login-text">Masuk</span>
+       <svg id="btn-login-loader" class="w-5 h-5 animate-spin hidden" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+       </svg></button>
+     </form>
+    </div>
+   </div>
+  </div>
+  <div id="app" class="h-full flex-col overflow-auto scrollbar-thin hidden"><!-- Header -->
+   <header class="gradient-bg text-white px-4 py-6 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+     <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+       <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+       </div>
+       <div>
+        <h1 id="app-title" class="text-xl sm:text-2xl font-bold">Sistem Data Kesehatan Warga</h1>
+        <p id="app-subtitle" class="text-teal-100 text-sm">Kelola data kesehatan masyarakat dengan mudah</p>
+       </div>
+      </div>
+      <div class="flex items-center gap-2"><button id="btn-settings" class="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors text-sm font-medium backdrop-blur-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg><span class="hidden sm:inline">Pengaturan</span> </button> <button id="btn-logout" class="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors text-sm font-medium backdrop-blur-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg><span class="hidden sm:inline">Logout</span> </button>
+      </div>
+     </div>
+    </div>
+   </header><!-- Main Content -->
+   <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto"><!-- Statistics Cards -->
+     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="stat-card rounded-2xl p-4 card-shadow border border-teal-100">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-2xl font-bold text-teal-700" id="total-warga">0</p>
+         <p class="text-xs text-slate-500">Total Warga</p>
+        </div>
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-4 card-shadow border border-teal-100">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-2xl font-bold text-blue-700" id="total-pria">0</p>
+         <p class="text-xs text-slate-500">Laki-laki</p>
+        </div>
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-4 card-shadow border border-teal-100">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-pink-500 rounded-xl flex items-center justify-center">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-2xl font-bold text-pink-700" id="total-wanita">0</p>
+         <p class="text-xs text-slate-500">Perempuan</p>
+        </div>
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-4 card-shadow border border-teal-100">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-2xl font-bold text-amber-700" id="total-bulan-ini">0</p>
+         <p class="text-xs text-slate-500">Ulang Tahun Bulan Ini</p>
+        </div>
+       </div>
+      </div>
+     </div><!-- Action Buttons -->
+     <div class="flex flex-wrap gap-3 mb-6"><button id="btn-tambah" class="btn-primary text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 text-sm">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+       </svg> Tambah Data Warga </button> <button id="btn-download-excel" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 text-sm transition-all">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+       </svg><span class="hidden sm:inline">Download Excel (.xlsx)</span> <span class="sm:hidden">Excel</span> </button>
+      <div class="flex-1 min-w-[200px]">
+       <div class="relative"><input type="text" id="search-input" placeholder="Cari nama atau NIK..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm bg-white">
+        <svg class="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+       </div>
+      </div>
+     </div><!-- Data Table -->
+     <div class="bg-white rounded-2xl card-shadow border border-slate-100 overflow-hidden">
+      <div class="overflow-x-auto scrollbar-thin">
+       <table class="w-full">
+        <thead>
+         <tr class="bg-slate-50 border-b border-slate-100">
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider">Nama</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden sm:table-cell">NIK</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden md:table-cell">Jenis Kelamin</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden lg:table-cell">Tanggal Lahir</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden lg:table-cell">Alamat</th>
+          <th class="text-center px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider">Aksi</th>
+         </tr>
+        </thead>
+        <tbody id="data-table-body">
+         <tr>
+          <td colspan="6" class="px-4 py-12 text-center text-slate-400">
+           <div class="flex flex-col items-center gap-3">
+            <svg class="w-16 h-16 text-slate-200" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p class="text-sm">Belum ada data warga</p>
+            <p class="text-xs">Klik tombol "Tambah Data Warga" untuk memulai</p>
+           </div></td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+    </div>
+   </main><!-- Modal Form -->
+   <div id="modal-form" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90%] overflow-hidden card-shadow fade-in">
+     <div class="gradient-bg px-6 py-4 flex items-center justify-between">
+      <h2 id="modal-title" class="text-lg font-bold text-white">Tambah Data Warga</h2><button id="btn-close-modal" class="text-white/80 hover:text-white transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <form id="form-warga" class="p-6 overflow-y-auto max-h-[calc(90vh-120px)] scrollbar-thin">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><!-- NIK -->
+       <div class="sm:col-span-2"><label for="nik" class="block text-sm font-medium text-slate-700 mb-1">NIK <span class="text-red-500">*</span></label> <input type="text" id="nik" name="nik" required maxlength="16" pattern="[0-9]{16}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm" placeholder="16 digit NIK">
+       </div><!-- Nama -->
+       <div class="sm:col-span-2"><label for="nama" class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label> <input type="text" id="nama" name="nama" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm" placeholder="Masukkan nama lengkap">
+       </div><!-- Tanggal Lahir -->
+       <div><label for="tanggal_lahir" class="block text-sm font-medium text-slate-700 mb-1">Tanggal Lahir <span class="text-red-500">*</span></label> <input type="date" id="tanggal_lahir" name="tanggal_lahir" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm">
+       </div><!-- Jenis Kelamin -->
+       <div><label for="jenis_kelamin" class="block text-sm font-medium text-slate-700 mb-1">Jenis Kelamin <span class="text-red-500">*</span></label> <select id="jenis_kelamin" name="jenis_kelamin" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm bg-white"> <option value="">Pilih jenis kelamin</option> <option value="Laki-laki">Laki-laki</option> <option value="Perempuan">Perempuan</option> </select>
+       </div><!-- Alamat -->
+       <div class="sm:col-span-2"><label for="alamat" class="block text-sm font-medium text-slate-700 mb-1">Alamat</label> <textarea id="alamat" name="alamat" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm resize-none" placeholder="Masukkan alamat lengkap"></textarea>
+       </div><!-- Riwayat Penyakit -->
+       <div class="sm:col-span-2"><label for="riwayat_penyakit" class="block text-sm font-medium text-slate-700 mb-1">Riwayat Penyakit</label> <textarea id="riwayat_penyakit" name="riwayat_penyakit" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm resize-none" placeholder="Masukkan riwayat penyakit jika ada"></textarea>
+       </div><!-- Keterangan Tambahan -->
+       <div class="sm:col-span-2"><label for="catatan" class="block text-sm font-medium text-slate-700 mb-1">Keterangan Tambahan</label> <textarea id="catatan" name="catatan" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm resize-none" placeholder="Keterangan atau catatan tambahan"></textarea>
+       </div>
+      </div>
+      <div class="flex gap-3 mt-6 pt-4 border-t border-slate-100"><button type="button" id="btn-cancel" class="flex-1 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors"> Batal </button> <button type="submit" id="btn-submit" class="flex-1 btn-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"> <span id="btn-submit-text">Simpan Data</span>
+        <svg id="btn-submit-loader" class="w-5 h-5 animate-spin hidden" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg></button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Modal Detail -->
+   <div id="modal-detail" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90%] overflow-hidden card-shadow fade-in">
+     <div class="gradient-bg px-6 py-4 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-white">Detail Data Warga</h2><button id="btn-close-detail" class="text-white/80 hover:text-white transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div id="detail-content" class="p-6 overflow-y-auto max-h-[calc(90vh-80px)] scrollbar-thin"><!-- Detail content will be inserted here -->
+     </div>
+    </div>
+   </div><!-- Delete Confirmation -->
+   <div id="modal-delete" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl w-full max-w-sm card-shadow fade-in p-6 text-center">
+     <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+     </div>
+     <h3 class="text-lg font-bold text-slate-800 mb-2">Hapus Data Warga?</h3>
+     <p class="text-slate-500 text-sm mb-6">Data yang dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?</p>
+     <div class="flex gap-3"><button id="btn-cancel-delete" class="flex-1 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors"> Batal </button> <button id="btn-confirm-delete" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2"> <span id="btn-delete-text">Hapus</span>
+       <svg id="btn-delete-loader" class="w-5 h-5 animate-spin hidden" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+       </svg></button>
+     </div>
+    </div>
+   </div><!-- Settings Modal -->
+   <div id="modal-settings" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90%] overflow-hidden card-shadow fade-in">
+     <div class="gradient-bg px-6 py-4 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-white">Pengaturan Admin</h2><button id="btn-close-settings" class="text-white/80 hover:text-white transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)] scrollbar-thin"><!-- Tab Navigation -->
+      <div class="flex gap-2 mb-6 border-b border-slate-200"><button id="tab-profile" class="tab-btn px-4 py-2 text-sm font-medium transition-colors border-b-2 border-teal-500 text-teal-600"> Profil Admin </button> <button id="tab-security" class="tab-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors border-b-2 border-transparent"> Keamanan </button>
+      </div><!-- Profile Tab -->
+      <div id="content-profile" class="tab-content">
+       <form id="form-profile">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><!-- Photo Upload Section -->
+         <div class="lg:col-span-1">
+          <div class="text-center">
+           <div class="relative inline-block mb-4">
+            <div class="w-32 h-32 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-4xl font-bold overflow-hidden" id="admin-photo-preview"><span id="admin-initial">A</span> <img id="admin-photo-img" class="w-full h-full object-cover hidden" alt="Foto Admin">
+            </div><label for="admin-photo-input" class="absolute bottom-0 right-0 w-10 h-10 bg-teal-500 hover:bg-teal-600 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-colors">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+             </svg></label> <input type="file" id="admin-photo-input" accept="image/*" class="hidden">
+           </div>
+           <p class="text-xs text-slate-500 mb-2">Upload Foto Profil</p><button type="button" id="btn-remove-photo" class="text-xs text-red-500 hover:text-red-600 hidden">Hapus Foto</button>
+          </div>
+         </div><!-- Profile Form -->
+         <div class="lg:col-span-2 space-y-4">
+          <div><label for="admin-name" class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label> <input type="text" id="admin-name" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm" placeholder="Masukkan nama lengkap">
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+           <div><label for="admin-email" class="block text-sm font-medium text-slate-700 mb-1">Email</label> <input type="email" id="admin-email" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm" placeholder="admin@example.com">
+           </div>
+           <div><label for="admin-phone" class="block text-sm font-medium text-slate-700 mb-1">Nomor Telepon</label> <input type="tel" id="admin-phone" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm" placeholder="08123456789">
+           </div>
+          </div>
+          <div><label for="admin-address" class="block text-sm font-medium text-slate-700 mb-1">Alamat</label> <textarea id="admin-address" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm resize-none" placeholder="Masukkan alamat lengkap"></textarea>
+          </div>
+          <div class="flex justify-end pt-4"><button type="submit" id="btn-save-profile" class="btn-primary text-white px-6 py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"> <span id="btn-save-profile-text">Simpan Profil</span>
+            <svg id="btn-save-profile-loader" class="w-5 h-5 animate-spin hidden" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg></button>
+          </div>
+         </div>
+        </div>
+       </form>
+      </div><!-- Security Tab -->
+      <div id="content-security" class="tab-content hidden">
+       <form id="form-security">
+        <div class="max-w-xl space-y-4">
+         <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+          <div class="flex gap-3">
+           <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+           </svg>
+           <div>
+            <p class="text-sm font-medium text-amber-800 mb-1">Perhatian</p>
+            <p class="text-xs text-amber-700">Pastikan Anda mengingat username dan password baru. Data login akan digunakan untuk masuk ke sistem.</p>
+           </div>
+          </div>
+         </div>
+         <div><label for="new-username" class="block text-sm font-medium text-slate-700 mb-1">Username Baru</label> <input type="text" id="new-username" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm" placeholder="Masukkan username baru">
+         </div>
+         <div><label for="new-password" class="block text-sm font-medium text-slate-700 mb-1">Password Baru</label> <input type="password" id="new-password" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm" placeholder="Masukkan password baru">
+         </div>
+         <div><label for="confirm-password" class="block text-sm font-medium text-slate-700 mb-1">Konfirmasi Password</label> <input type="password" id="confirm-password" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 input-focus text-sm" placeholder="Ulangi password baru">
+         </div>
+         <div id="password-error" class="hidden p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg><span id="password-error-message">Password tidak cocok</span>
+         </div>
+         <div class="flex justify-end pt-4"><button type="submit" id="btn-save-security" class="btn-primary text-white px-6 py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"> <span id="btn-save-security-text">Update Keamanan</span>
+           <svg id="btn-save-security-loader" class="w-5 h-5 animate-spin hidden" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+           </svg></button>
+         </div>
+        </div>
+       </form>
+      </div>
+     </div>
+    </div>
+   </div><!-- Toast Notification -->
+   <div id="toast" class="fixed bottom-4 right-4 bg-slate-800 text-white px-5 py-3 rounded-xl card-shadow hidden items-center gap-3 z-50 fade-in">
+    <svg id="toast-icon-success" class="w-5 h-5 text-teal-400 hidden" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
+    <svg id="toast-icon-error" class="w-5 h-5 text-red-400 hidden" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg><span id="toast-message" class="text-sm font-medium"></span>
+   </div>
+  </div>
+  <script>
+    // LocalStorage Keys
+    const STORAGE_KEYS = {
+      WARGA_DATA: 'warga_data',
+      ADMIN_CREDENTIALS: 'admin_credentials',
+      ADMIN_SETTINGS: 'admin_settings'
+    };
+
+    // Initialize default credentials
+    let ADMIN_CREDENTIALS = {
+      username: 'admin',
+      password: 'admin123'
+    };
+    
+    // Admin settings
+    let adminSettings = {
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      photo: ''
+    };
+    
+    // Load credentials from localStorage
+    const storedCredentials = localStorage.getItem(STORAGE_KEYS.ADMIN_CREDENTIALS);
+    if (storedCredentials) {
+      ADMIN_CREDENTIALS = JSON.parse(storedCredentials);
+    }
+    
+    // Load admin settings from localStorage
+    const storedSettings = localStorage.getItem(STORAGE_KEYS.ADMIN_SETTINGS);
+    if (storedSettings) {
+      adminSettings = JSON.parse(storedSettings);
+    }
+    
+    // Session management
+    let isLoggedIn = false;
+
+    let allData = [];
+    let editingRecord = null;
+    let deletingRecord = null;
+    let searchQuery = '';
+
+    // DOM Elements
+    const pages = {
+      loginPage: document.getElementById('login-page'),
+      appPage: document.getElementById('app')
+    };
+
+    const loginElements = {
+      form: document.getElementById('login-form'),
+      username: document.getElementById('login-username'),
+      password: document.getElementById('login-password'),
+      error: document.getElementById('login-error'),
+      errorMessage: document.getElementById('login-error-message'),
+      btnLogin: document.getElementById('btn-login'),
+      btnLoginText: document.getElementById('btn-login-text'),
+      btnLoginLoader: document.getElementById('btn-login-loader')
+    };
+
+    const elements = {
+      appTitle: document.getElementById('app-title'),
+      appSubtitle: document.getElementById('app-subtitle'),
+      totalWarga: document.getElementById('total-warga'),
+      totalPria: document.getElementById('total-pria'),
+      totalWanita: document.getElementById('total-wanita'),
+      totalBulanIni: document.getElementById('total-bulan-ini'),
+      tableBody: document.getElementById('data-table-body'),
+      modalForm: document.getElementById('modal-form'),
+      modalDetail: document.getElementById('modal-detail'),
+      modalDelete: document.getElementById('modal-delete'),
+      modalSettings: document.getElementById('modal-settings'),
+      modalTitle: document.getElementById('modal-title'),
+      formWarga: document.getElementById('form-warga'),
+      detailContent: document.getElementById('detail-content'),
+      searchInput: document.getElementById('search-input'),
+      btnTambah: document.getElementById('btn-tambah'),
+      btnSettings: document.getElementById('btn-settings'),
+      btnCloseModal: document.getElementById('btn-close-modal'),
+      btnCancel: document.getElementById('btn-cancel'),
+      btnSubmit: document.getElementById('btn-submit'),
+      btnSubmitText: document.getElementById('btn-submit-text'),
+      btnSubmitLoader: document.getElementById('btn-submit-loader'),
+      btnCloseDetail: document.getElementById('btn-close-detail'),
+      btnCancelDelete: document.getElementById('btn-cancel-delete'),
+      btnConfirmDelete: document.getElementById('btn-confirm-delete'),
+      btnDeleteText: document.getElementById('btn-delete-text'),
+      btnDeleteLoader: document.getElementById('btn-delete-loader'),
+      btnLogout: document.getElementById('btn-logout'),
+      btnCloseSettings: document.getElementById('btn-close-settings'),
+      toast: document.getElementById('toast'),
+      toastMessage: document.getElementById('toast-message'),
+      toastIconSuccess: document.getElementById('toast-icon-success'),
+      toastIconError: document.getElementById('toast-icon-error')
+    };
+
+    // LocalStorage Functions
+    function loadWargaData() {
+      const stored = localStorage.getItem(STORAGE_KEYS.WARGA_DATA);
+      if (stored) {
+        allData = JSON.parse(stored);
+      } else {
+        allData = [];
+      }
+      updateStatistics(allData);
+      renderTable(allData);
+    }
+
+    function saveWargaData() {
+      localStorage.setItem(STORAGE_KEYS.WARGA_DATA, JSON.stringify(allData));
+    }
+
+    function saveAdminCredentials() {
+      localStorage.setItem(STORAGE_KEYS.ADMIN_CREDENTIALS, JSON.stringify(ADMIN_CREDENTIALS));
+    }
+
+    function saveAdminSettings() {
+      localStorage.setItem(STORAGE_KEYS.ADMIN_SETTINGS, JSON.stringify(adminSettings));
+    }
+
+    // Page navigation
+    function showLoginPage() {
+      pages.loginPage.classList.remove('hidden');
+      pages.loginPage.classList.add('flex');
+      pages.appPage.classList.add('hidden');
+      pages.appPage.classList.remove('flex');
+      isLoggedIn = false;
+    }
+
+    function showAppPage() {
+      pages.loginPage.classList.add('hidden');
+      pages.loginPage.classList.remove('flex');
+      pages.appPage.classList.remove('hidden');
+      pages.appPage.classList.add('flex');
+      isLoggedIn = true;
+      loadWargaData();
+      updateAdminUI();
+    }
+
+    // Login handler
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      const username = loginElements.username.value.trim();
+      const password = loginElements.password.value;
+      
+      loginElements.error.classList.add('hidden');
+      setLoading(loginElements.btnLogin, loginElements.btnLoginText, loginElements.btnLoginLoader, true);
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+        showToast('Login berhasil! Selamat datang Admin', 'success');
+        loginElements.form.reset();
+        showAppPage();
+      } else {
+        loginElements.error.classList.remove('hidden');
+        loginElements.errorMessage.textContent = 'Username atau password salah';
+        showToast('Login gagal', 'error');
+      }
+      
+      setLoading(loginElements.btnLogin, loginElements.btnLoginText, loginElements.btnLoginLoader, false);
+    }
+
+    // Logout handler
+    function handleLogout() {
+      showToast('Anda telah logout', 'success');
+      showLoginPage();
+    }
+
+    // Utility Functions
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function showToast(message, type = 'success') {
+      elements.toastMessage.textContent = message;
+      elements.toastIconSuccess.classList.toggle('hidden', type !== 'success');
+      elements.toastIconError.classList.toggle('hidden', type !== 'error');
+      elements.toast.classList.remove('hidden');
+      elements.toast.classList.add('flex');
+      
+      setTimeout(() => {
+        elements.toast.classList.add('hidden');
+        elements.toast.classList.remove('flex');
+      }, 3000);
+    }
+
+    function setLoading(button, textEl, loaderEl, loading) {
+      button.disabled = loading;
+      textEl.classList.toggle('hidden', loading);
+      loaderEl.classList.toggle('hidden', !loading);
+    }
+
+    function generateId() {
+      return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    function updateStatistics(data) {
+      const total = data.length;
+      const pria = data.filter(d => d.jenis_kelamin === 'Laki-laki').length;
+      const wanita = data.filter(d => d.jenis_kelamin === 'Perempuan').length;
+      
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const bulanIni = data.filter(d => {
+        if (!d.tanggal_lahir) return false;
+        const date = new Date(d.tanggal_lahir);
+        return date.getMonth() === currentMonth;
+      }).length;
+
+      elements.totalWarga.textContent = total;
+      elements.totalPria.textContent = pria;
+      elements.totalWanita.textContent = wanita;
+      elements.totalBulanIni.textContent = bulanIni;
+    }
+
+    function filterData(data, query) {
+      if (!query) return data;
+      const q = query.toLowerCase();
+      return data.filter(d => 
+        (d.nama && d.nama.toLowerCase().includes(q)) ||
+        (d.nik && d.nik.toLowerCase().includes(q))
+      );
+    }
+
+    function renderTable(data) {
+      const filteredData = filterData(data, searchQuery);
+      
+      if (filteredData.length === 0) {
+        elements.tableBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-4 py-12 text-center text-slate-400">
+              <div class="flex flex-col items-center gap-3">
+                <svg class="w-16 h-16 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <p class="text-sm">${searchQuery ? 'Tidak ada data yang cocok' : 'Belum ada data warga'}</p>
+                <p class="text-xs">${searchQuery ? 'Coba kata kunci lain' : 'Klik tombol "Tambah Data Warga" untuk memulai'}</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      elements.tableBody.innerHTML = '';
+      filteredData.forEach(record => {
+        const row = createRow(record);
+        elements.tableBody.appendChild(row);
+      });
+    }
+
+    function createRow(record) {
+      const row = document.createElement('tr');
+      row.dataset.id = record.id;
+      row.className = 'table-row border-b border-slate-100 transition-colors';
+      row.innerHTML = `
+        <td class="px-4 py-3">
+          <div class="font-medium text-slate-800 text-sm">${record.nama || '-'}</div>
+          <div class="text-xs text-slate-400 sm:hidden">${record.nik || '-'}</div>
+        </td>
+        <td class="px-4 py-3 text-sm text-slate-600 hidden sm:table-cell">${record.nik || '-'}</td>
+        <td class="px-4 py-3 hidden md:table-cell">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${record.jenis_kelamin === 'Laki-laki' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}">
+            ${record.jenis_kelamin || '-'}
+          </span>
+        </td>
+        <td class="px-4 py-3 text-sm text-slate-600 hidden lg:table-cell">${formatDate(record.tanggal_lahir)}</td>
+        <td class="px-4 py-3 text-sm text-slate-600 hidden lg:table-cell">
+          <div class="max-w-xs truncate" title="${record.alamat || '-'}">
+            ${record.alamat || '-'}
+          </div>
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex items-center justify-center gap-1">
+            <button class="btn-detail p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" data-id="${record.id}" title="Lihat Detail">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+            <button class="btn-edit p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" data-id="${record.id}" title="Edit">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </button>
+            <button class="btn-delete p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" data-id="${record.id}" title="Hapus">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </div>
+        </td>
+      `;
+      
+      row.querySelector('.btn-detail').addEventListener('click', () => showDetail(record.id));
+      row.querySelector('.btn-edit').addEventListener('click', () => openEditModal(record.id));
+      row.querySelector('.btn-delete').addEventListener('click', () => openDeleteModal(record.id));
+      
+      return row;
+    }
+
+    function showDetail(id) {
+      const record = allData.find(d => d.id === id);
+      if (!record) return;
+
+      elements.detailContent.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center gap-4 pb-4 border-b border-slate-100">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-2xl font-bold">
+              ${record.nama ? record.nama.charAt(0).toUpperCase() : '?'}
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-800">${record.nama || '-'}</h3>
+              <p class="text-sm text-slate-500">NIK: ${record.nik || '-'}</p>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Tanggal Lahir</p>
+              <p class="text-sm font-medium text-slate-700">${formatDate(record.tanggal_lahir)}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Jenis Kelamin</p>
+              <p class="text-sm font-medium text-slate-700">${record.jenis_kelamin || '-'}</p>
+            </div>
+            <div class="col-span-2">
+              <p class="text-xs text-slate-400 mb-1">Alamat</p>
+              <p class="text-sm font-medium text-slate-700">${record.alamat || '-'}</p>
+            </div>
+          </div>
+          
+          <div class="space-y-3">
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Riwayat Penyakit</p>
+              <p class="text-sm text-slate-700 bg-slate-50 rounded-lg p-3">${record.riwayat_penyakit || 'Tidak ada riwayat penyakit'}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Keterangan Tambahan</p>
+              <p class="text-sm text-slate-700 bg-slate-50 rounded-lg p-3">${record.catatan || 'Tidak ada keterangan tambahan'}</p>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      elements.modalDetail.classList.remove('hidden');
+      elements.modalDetail.classList.add('flex');
+    }
+
+    function openFormModal() {
+      editingRecord = null;
+      elements.modalTitle.textContent = 'Tambah Data Warga';
+      elements.btnSubmitText.textContent = 'Simpan Data';
+      elements.formWarga.reset();
+      
+      elements.modalForm.classList.remove('hidden');
+      elements.modalForm.classList.add('flex');
+    }
+
+    function openEditModal(id) {
+      const record = allData.find(d => d.id === id);
+      if (!record) return;
+      
+      editingRecord = record;
+      elements.modalTitle.textContent = 'Edit Data Warga';
+      elements.btnSubmitText.textContent = 'Update Data';
+      
+      document.getElementById('nik').value = record.nik || '';
+      document.getElementById('nama').value = record.nama || '';
+      document.getElementById('tanggal_lahir').value = record.tanggal_lahir || '';
+      document.getElementById('jenis_kelamin').value = record.jenis_kelamin || '';
+      document.getElementById('alamat').value = record.alamat || '';
+      document.getElementById('riwayat_penyakit').value = record.riwayat_penyakit || '';
+      document.getElementById('catatan').value = record.catatan || '';
+      
+      elements.modalForm.classList.remove('hidden');
+      elements.modalForm.classList.add('flex');
+    }
+
+    function closeFormModal() {
+      elements.modalForm.classList.add('hidden');
+      elements.modalForm.classList.remove('flex');
+      editingRecord = null;
+    }
+
+    function closeDetailModal() {
+      elements.modalDetail.classList.add('hidden');
+      elements.modalDetail.classList.remove('flex');
+    }
+
+    function openDeleteModal(id) {
+      deletingRecord = allData.find(d => d.id === id);
+      if (!deletingRecord) return;
+      
+      elements.modalDelete.classList.remove('hidden');
+      elements.modalDelete.classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+      elements.modalDelete.classList.add('hidden');
+      elements.modalDelete.classList.remove('flex');
+      deletingRecord = null;
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      
+      const formData = {
+        nik: document.getElementById('nik').value.trim(),
+        nama: document.getElementById('nama').value.trim(),
+        tanggal_lahir: document.getElementById('tanggal_lahir').value,
+        jenis_kelamin: document.getElementById('jenis_kelamin').value,
+        alamat: document.getElementById('alamat').value.trim(),
+        riwayat_penyakit: document.getElementById('riwayat_penyakit').value.trim(),
+        catatan: document.getElementById('catatan').value.trim()
+      };
+      
+      setLoading(elements.btnSubmit, elements.btnSubmitText, elements.btnSubmitLoader, true);
+      
+      // Simulate saving delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      try {
+        if (editingRecord) {
+          // Update existing record
+          const index = allData.findIndex(d => d.id === editingRecord.id);
+          if (index !== -1) {
+            allData[index] = { ...editingRecord, ...formData };
+          }
+          showToast('Data berhasil diupdate', 'success');
+        } else {
+          // Create new record
+          const newRecord = {
+            id: generateId(),
+            ...formData,
+            createdAt: new Date().toISOString()
+          };
+          allData.push(newRecord);
+          showToast('Data berhasil disimpan', 'success');
+        }
+        
+        saveWargaData();
+        updateStatistics(allData);
+        renderTable(allData);
+        closeFormModal();
+      } catch (error) {
+        showToast('Terjadi kesalahan: ' + error.message, 'error');
+      } finally {
+        setLoading(elements.btnSubmit, elements.btnSubmitText, elements.btnSubmitLoader, false);
+      }
+    }
+
+    async function handleDelete() {
+      if (!deletingRecord) return;
+      
+      setLoading(elements.btnConfirmDelete, elements.btnDeleteText, elements.btnDeleteLoader, true);
+      
+      // Simulate deletion delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      try {
+        allData = allData.filter(d => d.id !== deletingRecord.id);
+        saveWargaData();
+        updateStatistics(allData);
+        renderTable(allData);
+        showToast('Data berhasil dihapus', 'success');
+        closeDeleteModal();
+      } catch (error) {
+        showToast('Terjadi kesalahan: ' + error.message, 'error');
+      } finally {
+        setLoading(elements.btnConfirmDelete, elements.btnDeleteText, elements.btnDeleteLoader, false);
+      }
+    }
+
+    // Settings Functions
+    function openSettingsModal() {
+      elements.modalSettings.classList.remove('hidden');
+      elements.modalSettings.classList.add('flex');
+      loadAdminSettings();
+      switchTab('profile');
+    }
+
+    function closeSettingsModal() {
+      elements.modalSettings.classList.add('hidden');
+      elements.modalSettings.classList.remove('flex');
+    }
+
+    function switchTab(tabName) {
+      const tabs = ['profile', 'security'];
+      tabs.forEach(tab => {
+        const btn = document.getElementById(`tab-${tab}`);
+        const content = document.getElementById(`content-${tab}`);
+        
+        if (tab === tabName) {
+          btn.classList.add('border-teal-500', 'text-teal-600');
+          btn.classList.remove('border-transparent', 'text-slate-500');
+          content.classList.remove('hidden');
+        } else {
+          btn.classList.remove('border-teal-500', 'text-teal-600');
+          btn.classList.add('border-transparent', 'text-slate-500');
+          content.classList.add('hidden');
+        }
+      });
+    }
+
+    function loadAdminSettings() {
+      document.getElementById('admin-name').value = adminSettings.name;
+      document.getElementById('admin-email').value = adminSettings.email;
+      document.getElementById('admin-phone').value = adminSettings.phone;
+      document.getElementById('admin-address').value = adminSettings.address;
+      
+      if (adminSettings.photo) {
+        document.getElementById('admin-photo-img').src = adminSettings.photo;
+        document.getElementById('admin-photo-img').classList.remove('hidden');
+        document.getElementById('admin-initial').classList.add('hidden');
+        document.getElementById('btn-remove-photo').classList.remove('hidden');
+      } else {
+        document.getElementById('admin-photo-img').classList.add('hidden');
+        document.getElementById('admin-initial').classList.remove('hidden');
+        document.getElementById('btn-remove-photo').classList.add('hidden');
+      }
+      
+      document.getElementById('new-username').value = ADMIN_CREDENTIALS.username;
+      document.getElementById('new-password').value = '';
+      document.getElementById('confirm-password').value = '';
+      document.getElementById('password-error').classList.add('hidden');
+    }
+
+    function updateAdminUI() {
+      if (adminSettings.name) {
+        const initial = adminSettings.name.charAt(0).toUpperCase();
+        document.getElementById('admin-initial').textContent = initial;
+      }
+    }
+
+    // Image upload handlers
+    function handlePhotoUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+          showToast('Ukuran file maksimal 2MB', 'error');
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          adminSettings.photo = event.target.result;
+          document.getElementById('admin-photo-img').src = event.target.result;
+          document.getElementById('admin-photo-img').classList.remove('hidden');
+          document.getElementById('admin-initial').classList.add('hidden');
+          document.getElementById('btn-remove-photo').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removePhoto() {
+      adminSettings.photo = '';
+      document.getElementById('admin-photo-img').classList.add('hidden');
+      document.getElementById('admin-initial').classList.remove('hidden');
+      document.getElementById('btn-remove-photo').classList.add('hidden');
+      document.getElementById('admin-photo-input').value = '';
+    }
+
+    // Save admin profile
+    async function handleSaveProfile(e) {
+      e.preventDefault();
+      
+      adminSettings.name = document.getElementById('admin-name').value.trim();
+      adminSettings.email = document.getElementById('admin-email').value.trim();
+      adminSettings.phone = document.getElementById('admin-phone').value.trim();
+      adminSettings.address = document.getElementById('admin-address').value.trim();
+      
+      setLoading(
+        document.getElementById('btn-save-profile'),
+        document.getElementById('btn-save-profile-text'),
+        document.getElementById('btn-save-profile-loader'),
+        true
+      );
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      try {
+        saveAdminSettings();
+        showToast('Profil berhasil disimpan', 'success');
+        updateAdminUI();
+      } catch (error) {
+        showToast('Gagal menyimpan profil: ' + error.message, 'error');
+      } finally {
+        setLoading(
+          document.getElementById('btn-save-profile'),
+          document.getElementById('btn-save-profile-text'),
+          document.getElementById('btn-save-profile-loader'),
+          false
+        );
+      }
+    }
+
+    // Save security settings
+    async function handleSaveSecurity(e) {
+      e.preventDefault();
+      
+      const newUsername = document.getElementById('new-username').value.trim();
+      const newPassword = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      
+      document.getElementById('password-error').classList.add('hidden');
+      
+      if (!newUsername) {
+        document.getElementById('password-error-message').textContent = 'Username tidak boleh kosong';
+        document.getElementById('password-error').classList.remove('hidden');
+        return;
+      }
+      
+      if (newPassword && newPassword !== confirmPassword) {
+        document.getElementById('password-error-message').textContent = 'Password tidak cocok';
+        document.getElementById('password-error').classList.remove('hidden');
+        return;
+      }
+      
+      if (newPassword && newPassword.length < 6) {
+        document.getElementById('password-error-message').textContent = 'Password minimal 6 karakter';
+        document.getElementById('password-error').classList.remove('hidden');
+        return;
+      }
+      
+      setLoading(
+        document.getElementById('btn-save-security'),
+        document.getElementById('btn-save-security-text'),
+        document.getElementById('btn-save-security-loader'),
+        true
+      );
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      try {
+        ADMIN_CREDENTIALS.username = newUsername;
+        if (newPassword) {
+          ADMIN_CREDENTIALS.password = newPassword;
+        }
+        
+        saveAdminCredentials();
+        showToast('Keamanan berhasil diupdate', 'success');
+        document.getElementById('new-password').value = '';
+        document.getElementById('confirm-password').value = '';
+      } catch (error) {
+        showToast('Gagal update keamanan: ' + error.message, 'error');
+      } finally {
+        setLoading(
+          document.getElementById('btn-save-security'),
+          document.getElementById('btn-save-security-text'),
+          document.getElementById('btn-save-security-loader'),
+          false
+        );
+      }
+    }
+
+    // Download Excel Function (XLSX Format)
+    function downloadExcel() {
+      if (allData.length === 0) {
+        showToast('Tidak ada data untuk diunduh', 'error');
+        return;
+      }
+
+      try {
+        // Sort data by name alphabetically
+        const sortedData = [...allData].sort((a, b) => {
+          const nameA = (a.nama || '').toLowerCase();
+          const nameB = (b.nama || '').toLowerCase();
+          return nameA.localeCompare(nameB, 'id');
+        });
+
+        // Prepare data for Excel
+        const excelData = sortedData.map((record, index) => ({
+          'No': index + 1,
+          'NIK': record.nik || '-',
+          'Nama Lengkap': record.nama || '-',
+          'Tanggal Lahir': formatDateForExcel(record.tanggal_lahir),
+          'Jenis Kelamin': record.jenis_kelamin || '-',
+          'Alamat': record.alamat || '-',
+          'Riwayat Penyakit': record.riwayat_penyakit || '-',
+          'Keterangan Tambahan': record.catatan || '-'
+        }));
+
+        // Create workbook and worksheet
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(excelData);
+
+        // Set column widths for better readability
+        ws['!cols'] = [
+          { wch: 5 },   // No
+          { wch: 18 },  // NIK
+          { wch: 25 },  // Nama Lengkap
+          { wch: 15 },  // Tanggal Lahir
+          { wch: 15 },  // Jenis Kelamin
+          { wch: 30 },  // Alamat
+          { wch: 30 },  // Riwayat Penyakit
+          { wch: 30 }   // Keterangan Tambahan
+        ];
+
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Data Warga');
+
+        // Generate filename with timestamp
+        const timestamp = new Date().toISOString().split('T')[0];
+        const filename = `Data_Warga_${timestamp}.xlsx`;
+
+        // Download file
+        XLSX.writeFile(wb, filename);
+        
+        showToast(`Data berhasil diunduh dalam format Excel (${sortedData.length} warga)`, 'success');
+      } catch (error) {
+        showToast('Gagal mengunduh data: ' + error.message, 'error');
+      }
+    }
+
+    function formatDateForExcel(dateString) {
+      if (!dateString) return '-';
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    // Event Listeners
+    loginElements.form.addEventListener('submit', handleLogin);
+    elements.btnLogout.addEventListener('click', handleLogout);
+    elements.btnTambah.addEventListener('click', openFormModal);
+    elements.btnSettings.addEventListener('click', openSettingsModal);
+    elements.btnCloseModal.addEventListener('click', closeFormModal);
+    elements.btnCancel.addEventListener('click', closeFormModal);
+    elements.btnCloseDetail.addEventListener('click', closeDetailModal);
+    elements.btnCancelDelete.addEventListener('click', closeDeleteModal);
+    elements.btnConfirmDelete.addEventListener('click', handleDelete);
+    elements.btnCloseSettings.addEventListener('click', closeSettingsModal);
+    elements.formWarga.addEventListener('submit', handleSubmit);
+    
+    document.getElementById('btn-download-excel').addEventListener('click', downloadExcel);
+    
+    document.getElementById('tab-profile').addEventListener('click', () => switchTab('profile'));
+    document.getElementById('tab-security').addEventListener('click', () => switchTab('security'));
+    
+    document.getElementById('form-profile').addEventListener('submit', handleSaveProfile);
+    document.getElementById('form-security').addEventListener('submit', handleSaveSecurity);
+    
+    document.getElementById('admin-photo-input').addEventListener('change', handlePhotoUpload);
+    document.getElementById('btn-remove-photo').addEventListener('click', removePhoto);
+    
+    elements.searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderTable(allData);
+    });
+
+    // Close modals on backdrop click
+    elements.modalForm.addEventListener('click', (e) => {
+      if (e.target === elements.modalForm) closeFormModal();
+    });
+    
+    elements.modalDetail.addEventListener('click', (e) => {
+      if (e.target === elements.modalDetail) closeDetailModal();
+    });
+    
+    elements.modalDelete.addEventListener('click', (e) => {
+      if (e.target === elements.modalDelete) closeDeleteModal();
+    });
+    
+    elements.modalSettings.addEventListener('click', (e) => {
+      if (e.target === elements.modalSettings) closeSettingsModal();
+    });
+
+    // Initialize app
+    showLoginPage();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c056ff924f65e29',t:'MTc2ODgxNjMyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
